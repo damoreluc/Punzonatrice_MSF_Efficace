@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_Ctrl" Id="{79837bc5-e118-4796-99ef-42b2c8b73b77}">
+    <Declaration><![CDATA[TYPE ST_Ctrl :
+STRUCT
+	bEmergency	:	BOOL;	// Emergency. It must be TRUE for the machine to operate
+	bEnable		:	BOOL;	// Machine enablement. It must be TRUE for the machine to operate	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

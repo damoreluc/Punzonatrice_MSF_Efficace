@@ -1,0 +1,525 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_FSM" Id="{3d239eaf-9d5a-4eb8-be9f-380f07abc2ae}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_FSM
+VAR_INPUT
+	stIn		:	ST_In;
+	stCtrl		:	ST_Ctrl;
+	stCmd		:	ST_Cmd;
+	stParams	:	ST_Params;
+	stStatus	:	ST_Status;
+END_VAR
+
+VAR_OUTPUT
+	eStep		:	E_Step;
+	tStepTime	:	TIME;
+	eErrStep	:	E_Step;
+	nErrId		:	DINT;
+	
+	// Digital Outputs
+	bFixedGreen		:	BOOL;	// machine running light green indicator
+	bBlinkingGreen	:	BOOL;	// machine stopping blinking green indicator
+	bFixedRed		:	BOOL;	// machine stopped light red indicator
+	bBlinkingRed	:	BOOL;	// blinking red indicator
+	bFixedOrange	:	BOOL;	// recovery light orange indicator	
+	bBlinkingOrange	:	BOOL;	// blinking orange indicator
+	bQ1				:	BOOL;	// loading conveyor motor
+	bQ2				:	BOOL;	// unloading conveyor motor
+	bQ3				:	BOOL;	// lower the punch piston
+	bQ4				:	BOOL;	// lift the punch piston	
+END_VAR
+
+VAR_IN_OUT
+
+END_VAR
+
+VAR
+	bInitialized :  BOOL;
+	eNewstep :  E_Step;
+	bEntryact :  BOOL;
+	fbTonStep :  TON;
+	
+	(* filters on other input from plant *)
+	fbTonPacketIn : TON();		// Filter on the input object presence signal
+	fbRtPacketIn : R_TRIG();	// Presence of Incoming Object (rise edge)
+	fbTonPacketOut : TON();		// Filter on the object discharge signal
+	fbRtPacketOut: R_TRIG();	// Object Discharge (rise edge)
+	
+	(* filters on stop input *)
+	//fbFtStop : F_TRIG;		// Stop control (fall edge)
+	bStopRequest : BOOL;		// Stop request
+	
+	// object on conveyor
+	bConveyorLoaded	:	BOOL;
+
+
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	(* here you can wait events from other controllers *)
+	eNewStep := E_Step.NoStep;
+	eStep := E_Step.Stop;
+	bEntryact := FALSE;
+	bInitialized := TRUE;
+ELSE
+	// --- FSM Cyclical Code ----------------------------------------------
+	
+	// update of the enabling conditions (bStop, alarms, etc.)
+    //enable := stCtrl.bEnable AND bStop AND bEmg;
+	
+	// 1. FSM Preamble ----------------------------------------------------
+
+    // 1.a State machine disabled or failure
+	IF NOT stCtrl.bEnable OR NOT stCtrl.bEmergency OR stStatus.bFailure THEN
+		eNewStep := E_Step.NeOrError;
+	END_IF
+
+	// 1.b Update eStep with the required step to perform
+	//     and set bEntryact to FALSE in order to enable the Entry action
+	IF eNewstep <> E_Step.NoStep THEN
+		eStep := eNewstep;
+		eNewstep := E_Step.NoStep;
+		bEntryact := FALSE;
+	END_IF;
+
+	// 1.c Do filters on signals	
+	fbTonPacketIn(IN := stIn.bFc1, PT := T#200MS);	// Object Presence Sensor Filter on Loading Platform
+	fbTonPacketOut(IN := stIn.bFc2, PT := T#200MS);	// Object Presence Sensor Filter on Unloading Platform	
+	
+	//     Do edge detection
+	fbRtPacketIn(CLK := fbTonPacketIn.Q);		// Edge detection on Loading Platform
+	fbRtPacketOut(CLK := fbTonPacketOut.Q);		// Edge detection on Unloading Platform	
+	
+	//fbFtStop(CLK := bStop);						// Active edge of the Stop control
+	
+	// Do requests, for example to stop the machine
+	IF stCmd.bStop THEN
+		bStopRequest := TRUE;
+	END_IF
+	
+	
+	// 2. The main switch-case ---------------------------------------------------
+	CASE eStep OF
+		// not Enabled or Error -----------------------
+		E_Step.NeOrError :
+			// on entry action
+			IF NOT bEntryact THEN
+				stStatus.bFailure := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bFixedRed := FALSE;
+			bBlinkingRed := TRUE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;			
+			
+			// next state transition
+			IF stCtrl.bEnable THEN
+				IF stCmd.bAck THEN
+					eNewStep := E_Step.Recovering;
+				END_IF
+			END_IF
+		
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				nErrId := 0;
+				eErrStep := E_Step.NoStep;
+			END_IF
+			
+		// Recovering ---------------------------------			
+		E_Step.Recovering :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := TRUE;
+			
+			bQ1 := FALSE;
+			bQ2 := bConveyorLoaded;
+			bQ3 := NOT(stIn.bFc3);
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF stCtrl.bEnable THEN
+				IF NOT(stStatus.bFailure) THEN
+					IF (bConveyorLoaded AND NOT(stIn.bFc1) AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) THEN
+						eNewStep := E_Step.Stopping;
+					END_IF
+				END_IF				
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				stStatus.bFailure := FALSE;
+			END_IF			
+
+		// Stopping -----------------------------------
+		E_Step.Stopping :
+			// on entry action
+			IF NOT bEntryact THEN
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := FALSE;
+			bBlinkingGreen := TRUE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF tStepTime >= stParams.tStoppingDelay THEN
+				eNewStep := E_Step.Stop;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+			
+		// Stop ---------------------------------------
+		E_Step.Stop :
+			// on entry action
+			IF NOT bEntryact THEN
+				bStopRequest := FALSE;
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF NOT stCmd.bStop AND stCmd.bStart THEN
+				IF NOT(stIn.bFc3) THEN
+					eNewStep := E_Step.RecoverPunch;
+				ELSE
+					eNewStep := E_Step.WaitObject;
+				END_IF
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+
+		// Recover Punch ------------------------------------
+		E_Step.RecoverPunch :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := TRUE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := NOT(stIn.bFc3);
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF bStopRequest THEN
+				eNewStep := E_Step.Stopping;
+			ELSIF stIn.bFc3 THEN
+				eNewStep := E_Step.WaitObject;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF			
+			
+		// Waiting for new object -----------------------------
+		E_Step.WaitObject :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := FALSE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF bStopRequest THEN
+				eNewStep := E_Step.Stopping;
+			ELSIF fbRtPacketIn.Q THEN
+				eNewStep := E_Step.DelayToFeeding;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF	
+
+		// A little delay before feeding -----------------------
+		E_Step.DelayToFeeding :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF bStopRequest THEN
+				eNewStep := E_Step.Stopping;
+			ELSIF tStepTime >= stParams.tLoadingDelay THEN
+				eNewStep := E_Step.Loading;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF	
+			
+
+		// Transfer Object below the punch -----------
+		E_Step.Loading :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := TRUE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF fbRtPacketOut.Q THEN
+				eNewStep := E_Step.LowerPunch;
+			ELSIF tStepTime >= stParams.tMaxTravelTime THEN
+				eNewStep := E_Step.NeOrError;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+
+
+		// Lower the punch ----------------------
+		E_Step.LowerPunch :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := NOT(stIn.bFc4);
+			
+			// next state transition
+			IF stIn.bFc4 THEN
+				eNewStep := E_Step.LiftPunch;
+			ELSIF tStepTime >= stParams.tMaxPunchMoveTime THEN
+				eNewStep := E_Step.NeOrError;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+
+
+		// Lift the punch ----------------------
+		E_Step.LiftPunch :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := NOT(stIn.bFc3);
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF stIn.bFc3 THEN
+				eNewStep := E_Step.Unloading;
+			ELSIF tStepTime >= stParams.tMaxPunchMoveTime THEN
+				eNewStep := E_Step.NeOrError;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+
+		// Outgoing object discharge ----------------------
+		E_Step.Unloading :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := TRUE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF fbRtPacketIn.Q THEN
+				eNewStep := E_Step.DelayOnUnloading;
+			ELSIF tStepTime >= stParams.tMaxTravelTime THEN
+				eNewStep := E_Step.NeOrError;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+
+
+		// delay after unloading ----------------------
+		E_Step.DelayOnUnloading :
+			// on entry action
+			IF NOT bEntryact THEN
+				bConveyorLoaded := TRUE;
+				bEntryact := TRUE;
+			END_IF
+			
+			// body
+			bFixedGreen := TRUE;
+			bBlinkingGreen := FALSE;
+			bFixedRed := FALSE;
+			bBlinkingRed := FALSE;
+			bFixedOrange := FALSE;
+			bBlinkingOrange := FALSE;
+			
+			bQ1 := FALSE;
+			bQ2 := FALSE;
+			bQ3 := FALSE;
+			bQ4 := FALSE;
+			
+			// next state transition
+			IF bStopRequest THEN
+				eNewStep := E_Step.Stopping;
+			ELSIF tStepTime >= stParams.tUnloadingDelay AND NOT(stIn.bFc1) THEN
+				eNewStep := E_Step.WaitObject;
+			END_IF
+			
+			// on exit action
+			IF eNewStep <> E_Step.NoStep THEN
+				;
+			END_IF
+
+		
+//--------------------			
+		
+			
+	ELSE
+		// this happens also if we forget to code one step 
+		eNewstep := E_Step.NeOrError;
+		eErrStep := E_Step.Unknown;
+		nErrId := -9;
+	END_CASE;
+	
+	// 3. FSM Epilogue ------------------------------------------------------
+	// 3.1 Calling Auxiliary FBs
+	
+	// 3.2 Elapsed time into the current step
+	fbTonStep(IN := (eNewstep = E_Step.NoStep), PT := T#500H );
+	tStepTime := fbTonStep.ET;
+	
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

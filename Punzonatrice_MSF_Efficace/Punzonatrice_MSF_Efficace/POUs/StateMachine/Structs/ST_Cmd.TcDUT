@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_Cmd" Id="{bf673662-cf7a-456d-9b57-48c2ffd8202b}">
+    <Declaration><![CDATA[TYPE ST_Cmd :
+STRUCT
+	bAck	:	BOOL;	// Alarm Recognition
+	bStop	:	BOOL;	// Stop the machine
+	bStart	:	BOOL;	// Starts the machine	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

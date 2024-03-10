@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_Status" Id="{6f46f5f5-0939-4db8-b9da-c2f069ffc946}">
+    <Declaration><![CDATA[TYPE ST_Status :
+STRUCT
+	bCritical : BOOL;				// The machine has at least one active critical condition
+	bError : BOOL;					// The machine has at least one active error condition	
+	bWarning : BOOL;				// The machine has at least one active signal	
+	bInfo : BOOL;					// The machine has at least one active piece of information			
+	bVerbose : BOOL;				// The machine has at least one active message
+	
+	bFailure : BOOL;				// The machine has broken down (critical + error)	
+	eStep : E_Step;					// Finite State Machine step
+	strStep : STRING;				// step described as text
+	tStepTime : TIME;				// elapsed time on each state machine step/state
+	eErrorStep : E_Step;			// Step in which the error was generated
+	nErrorID : DINT;				// Error code	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

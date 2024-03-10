@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ReadCmd" Id="{4adcbca9-3675-40b0-8f1b-4f0ddebdbf61}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ReadCmd
+VAR_INPUT
+	stIn	:	ST_In;
+END_VAR
+VAR_OUTPUT
+	stCmd	:	ST_Cmd;
+END_VAR
+VAR
+//	fbRtStart	: R_TRIG;
+//	fbRtStop	: R_TRIG;
+	fbTpStart	: TP;
+	fbTpStop	: TP;	
+	fbTpAck		: TP;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// filters on input button
+//fbRtStart( CLK := stIn.bStart );
+//fbRtStop( CLK := stIn.bStop );
+fbTpStart( IN := stIn.bStart, PT := T#500MS );
+fbTpStop( IN := stIn.bStop, PT := T#50MS );
+fbTpAck( IN := stIn.bAck, PT := T#50MS );
+
+//stCmd.bStart	:= fbRtStart.Q;
+//stCmd.bStop		:= fbRtStop.Q;
+stCmd.bStart	:= fbTpStart.Q;
+stCmd.bStop		:= fbTpStop.Q;
+stCmd.bAck		:= fbTpAck.Q;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

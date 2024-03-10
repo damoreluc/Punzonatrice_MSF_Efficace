@@ -1,13 +1,64 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TcPlcObject Version="1.1.0.1">
-  <POU Name="MAIN" Id="{f9a225d6-227e-4846-a38a-e189c9e25045}">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{f9a225d6-227e-4846-a38a-e189c9e25045}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
+	bInitialized : BOOL;
+	
+	fbGetCurTaskIndex : GETCURTASKINDEX;		
+	tTaskCycleTime : UDINT;					// tempo di ciclo della task in microsecondi
+	tTaskExecTime : UDINT;					// tempo di esecuzione della task in microsecondi
+	tTaskMaxExecTime : UDINT;				// tempo massimo di esecuzione della task in microsecondi
+
+// machine I/Os 	
+// inputs
+	stIn		:	ST_In;
+	stRawIn		:	ST_RawIn;
+
+// outputs
+	stOut		:	ST_Out;
+	stRawOut	:	ST_RawOut;	
+	
+// state machine internals, useful for debugging
+	stStatus	: 	ST_Status;
+	
+// machine controls
+	stCtrl		:	ST_Ctrl;
+
+// full machine
+  fbPunzonatrice	:	FB_Punzonatrice_Main();
+  
 END_VAR
-]]>
-    </Declaration>
+]]></Declaration>
     <Implementation>
-      <ST><![CDATA[]]></ST>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	// Get the Cycle Time of the task to which this PRG is assigned (it will then be shared with the State Machine)
+	fbGetCurTaskIndex();
+	tTaskCycleTime := _TaskInfo[fbGetCurTaskIndex.index].CycleTime / 10;	// CycleTime is expressed in multiples of 100ns
+	bInitialized := TRUE;
+	
+ELSE
+	(* task time *)
+	tTaskExecTime := _TaskInfo[fbGetCurTaskIndex.index].LastExecTime / 10;		// ExecTime is expressed in multiples of 100ns
+	IF tTaskExecTime > tTaskMaxExecTime THEN
+			tTaskMaxExecTime := tTaskExecTime;
+	END_IF;	
+	
+	(* machine *)
+	fbPunzonatrice(
+		bEnable:= TRUE, 
+		tTaskCycleTime:= tTaskExecTime, 
+		nId:= 0, 
+		bHwError:= FALSE, 
+		stRawIn:= stRawIn, 
+		stIn:= stIn, 
+		stRawOut:= stRawOut, 
+		stOut:= stOut, 
+		stCtrl:= stCtrl, 
+		stStatus:= stStatus);
+	
+END_IF
+	]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

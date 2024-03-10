@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Punzonatrice_Main" Id="{ef2b8537-dc84-4ef5-92bb-37cef2920023}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Punzonatrice_Main
+VAR_INPUT
+	(* main inputs to the state machine *)
+	bEnable			: BOOL;		// state machine enable
+	tTaskCycleTime	: UDINT;
+	nId				: USINT;	
+	bHwError		: BOOL;		
+END_VAR
+VAR_OUTPUT
+END_VAR
+VAR_IN_OUT
+	(* machine I/Os *)
+	stRawIn		:	ST_RawIn;
+	stIn		:	ST_In;
+	stRawOut	:	ST_RawOut;
+	stOut		:	ST_Out;
+	stCtrl		:	ST_Ctrl;
+	
+	(* state machine internals, useful for debugging  *)
+	stStatus	:	ST_Status;	
+END_VAR
+VAR
+	bInitialized	: 	BOOL;		// FB initialization
+	stCmd			:	st_Cmd;
+	stParams		:	ST_Params;	
+	errno			:	INT;
+	fbReadCmd		:	FB_ReadCmd;
+	fbReadCtrl		:	FB_ReadCtrl;
+	fbReadIn		:	FB_ReadInputs;
+	fbDiagnostic	:	FB_Diagnostic;
+	fbStateMachine	:	FB_FSM;
+	fbWriteOut		:	FB_WriteOutputs;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT bInitialized THEN
+	// start-up operations
+	bInitialized := TRUE;
+ELSE
+	// 01. Read inputs, controls, parameters and commands
+	fbReadIn( stRawIn := stRawIn,
+			  stIn => stIn);
+			 
+	fbReadCtrl( nId:= nId,
+				bEnable:= bEnable,
+				stIn:= stIn,
+				stCtrl=> stCtrl);
+				
+	fbReadCmd( stIn:= stIn, 
+			   stCmd=> stCmd);
+			   
+	// 02. events management fbDiagnostic
+	fbDiagnostic(
+	stIn:= stIn, 
+	stOut:= stOut, 
+	stParams:= stParams, 
+	stCtrl:= stCtrl, 
+	bHwError:= bHwError, 
+	bAck:= stCmd.bAck, 
+	stStatus:= stStatus);
+	
+	stStatus.bCritical := fbDiagnostic.bCritical;
+	stStatus.bError := fbDiagnostic.bError;
+	stStatus.bWarning := fbDiagnostic.bWarning;
+	stStatus.bInfo := fbDiagnostic.bInfo;
+	stStatus.bVerbose := fbDiagnostic.bVerbose;
+	stStatus.bFailure := fbDiagnostic.bFailure;
+	stOut.bBlinkingRed := fbDiagnostic.bCritical;
+	stOut.bBlinkingOrange := fbDiagnostic.bBlinking;
+	stOut.bFixedOrange := fbDiagnostic.bFixed;
+	
+	// 03. main finite state machine
+	fbStateMachine(
+		stIn:= stIn, 
+		stCtrl:= stCtrl, 
+		stCmd:= stCmd, 
+		stParams:= stParams, 
+		stStatus:= stStatus
+	);
+	stStatus.eStep := fbStateMachine.eStep;
+	stStatus.strStep := TO_STRING(stStatus.eStep);
+	stStatus.tStepTime := fbStateMachine.tStepTime;
+	stStatus.eErrorStep := fbStateMachine.eErRstep; 
+	stStatus.nErrorID := fbStateMachine.nErrId;
+	
+	stOut.bFixedGreen := fbStateMachine.bFixedGreen;
+	stOut.bBlinkingGreen := fbStateMachine.bBlinkingGreen;
+	stOut.bFixedRed := fbStateMachine.bFixedRed;
+	stOut.bBlinkingRed := fbStateMachine.bBlinkingRed;
+	stOut.bFixedOrange := fbStateMachine.bFixedOrange;
+	stOut.bBlinkingOrange := fbStateMachine.bBlinkingOrange;
+	
+	stOut.bQ1 := fbStateMachine.bQ1;
+	stOut.bQ2 := fbStateMachine.bQ2;
+	stOut.bQ3 := fbStateMachine.bQ3;
+	stOut.bQ4 := fbStateMachine.bQ4;	
+
+    // 04. secondary state machines
+	
+	// 05. write outputs and machine information
+	fbWriteOut( stOut:= stOut, 
+				stRawOut:= stRawOut);
+				
+	// 06. end - other operations
+	
+				
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_RawIn" Id="{c4828616-797e-49e7-abef-87d0a82174f2}">
+    <Declaration><![CDATA[TYPE ST_RawIn :
+STRUCT
+	// Physical digital Inputs
+	bStart	AT %I*	:	BOOL;	// start button (N.O. contact)
+	bStop	AT %I*	:	BOOL;	// stop button (N.C. contact)
+	bEmg	AT %I*	:	BOOL;	// emergency button (N.C. contact)
+	bAck	AT %I*	:	BOOL;	// error acknowledge button (N.O. contact)
+	bFc1	AT %I*	:	BOOL;	// proximity sensor on conveyor input (N.C. contact)
+	bFc2	AT %I*	:	BOOL;	// proximity sensor on conveyor workplace (N.C. contact)
+	bFc3	AT %I*	:	BOOL;	// proximity sensor at punch top (N.O. contact)
+	bFc4	AT %I*	:	BOOL;	// proximity sensor at punch bottom (N.O. contact)	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

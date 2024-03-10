@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_out" Id="{172c292e-283d-4bf0-862c-8cc37a000d19}">
+    <Declaration><![CDATA[TYPE ST_out :
+STRUCT
+	// Digital Outputs
+	bFixedGreen		:	BOOL;	// machine running light green indicator
+	bBlinkingGreen	:	BOOL;	// machine stopping blinking light green indicator	
+	bFixedRed		:	BOOL;	// machine stopped light red indicator
+	bBlinkingRed	:	BOOL;	// blinking red indicator
+	bFixedOrange	:	BOOL;	// recovery light orange indicator	
+	bBlinkingOrange	:	BOOL;	// blinking orange indicator
+	bQ1				:	BOOL;	// loading conveyor motor
+	bQ2				:	BOOL;	// unloading conveyor motor
+	bQ3				:	BOOL;	// lower the punch piston
+	bQ4				:	BOOL;	// lift the punch piston
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

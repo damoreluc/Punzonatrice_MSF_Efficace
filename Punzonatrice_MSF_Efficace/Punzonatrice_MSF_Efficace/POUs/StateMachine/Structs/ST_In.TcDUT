@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_In" Id="{7f39ed06-edf0-4840-a756-a17cb87fc3ab}">
+    <Declaration><![CDATA[TYPE ST_In :
+STRUCT
+	// Digital Inputs
+	bStart	:	BOOL;	// start button active HIGH
+	bStop	:	BOOL;	// stop button active HIGH
+	bEmg	:	BOOL;	// emergency button active LOW
+	bAck	:	BOOL;	// error acknowledge button active HIGH
+	bFc1	:	BOOL;	// proximity sensor on conveyor input active HIGH
+	bFc2	:	BOOL;	// proximity sensor on conveyor workplace active HIGH
+	bFc3	:	BOOL;	// proximity sensor at punch top active HIGH
+	bFc4	:	BOOL;	// proximity sensor at punch bottom active HIGH
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

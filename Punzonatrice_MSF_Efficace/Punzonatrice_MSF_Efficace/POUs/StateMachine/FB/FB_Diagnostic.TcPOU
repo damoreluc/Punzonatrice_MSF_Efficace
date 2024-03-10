@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_Diagnostic" Id="{2bbf1077-ba87-46e6-8764-2f1693fbd54e}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_Diagnostic
+VAR_INPUT
+	stIn : ST_In;
+	stOut : ST_Out;
+	stParams : ST_Params;
+	stCtrl : ST_Ctrl;
+	bHwError : BOOL;
+	bAck : BOOL;
+	stStatus : ST_Status;	
+END_VAR
+VAR_IN_OUT
+END_VAR
+VAR_OUTPUT
+	bCritical	: BOOL;
+	bError		: BOOL;
+	bWarning	: BOOL;
+	bInfo		: BOOL;
+	bVerbose	: BOOL;
+	bFailure	: BOOL;
+	bBlinking	: BOOL;
+	bFixed		: BOOL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// on Ack, reset holding conditions
+IF bAck THEN
+	bCritical := FALSE;
+	bError := FALSE;
+	bWarning := FALSE;
+	bInfo := FALSE;
+	bVerbose := FALSE;
+	bBlinking := FALSE;
+END_IF
+
+// update holding conditions
+bFailure := bCritical OR bError;
+
+bBlinking := bFailure;
+bFixed := bWarning;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ReadCtrl" Id="{27677cfd-60a4-47fe-8fe6-a38cd5902f8a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ReadCtrl
+VAR_INPUT
+	nId:	INT;
+	bEnable : BOOL;
+	stIn : ST_In;
+END_VAR
+VAR_OUTPUT
+	stCtrl : ST_Ctrl;
+END_VAR
+VAR
+	fbTonStartup: TON;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbTonStartup(IN := TRUE, PT := T#3S);
+stCtrl.bEmergency := stIn.bEmg;
+stCtrl.bEnable := fbTonStartup.Q AND bEnable;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_ReadInputs" Id="{e8b8d883-b2c1-4cd5-ace8-e3c3a81a8155}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_ReadInputs
+VAR_INPUT
+END_VAR
+VAR_IN_OUT
+	stRawIn		:	ST_RawIn;
+END_VAR
+VAR_OUTPUT
+	stIn		:	ST_In;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// digital
+stIn.bEmg := stRawIn.bEmg;
+stIn.bStart := stRawIn.bStart;
+stIn.bStop := NOT stRawIn.bStop;
+stIn.bAck := stRawIn.bAck;
+stIn.bFc1 := NOT stRawIn.bFc1;
+stIn.bFc2 := NOT stRawIn.bFc2;
+stIn.bFc3 := stRawIn.bFc3;
+stIn.bFc4 := stRawIn.bFc4;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_Params" Id="{e7b45913-0487-40b8-a97f-88822d05f65f}">
+    <Declaration><![CDATA[TYPE ST_Params :
+STRUCT
+	// machine parameters
+	tLoadingDelay	:	TIME := T#3S;
+	tUnloadingDelay	:	TIME := T#3S;
+	tMaxTravelTime	: TIME := T#60S;  // max travel time on conveyor
+	tMaxPunchMoveTime : TIME := T#60S; // max punch moving time
+	tStoppingDelay	:	TIME := T#2s;
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="ST_RawOut" Id="{821c2572-214a-4259-bac4-b13f6a8adef4}">
+    <Declaration><![CDATA[TYPE ST_RawOut :
+STRUCT
+	// Physical digital Outputs
+	bLStart	AT %Q*	:	BOOL;	// machine running light green indicator
+	bLStop	AT %Q*	:	BOOL;	// machine stopped light red indicator
+	bLAck	AT %Q*	:	BOOL;	// recovery light orange indicator	
+	bQ1		AT %Q*	:	BOOL;	// loading conveyor motor
+	bQ2		AT %Q*	:	BOOL;	// unloading conveyor motor
+	bQ3		AT %Q*	:	BOOL;	// lower the punch piston
+	bQ4		AT %Q*	:	BOOL;	// lift the punch piston	
+END_STRUCT
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

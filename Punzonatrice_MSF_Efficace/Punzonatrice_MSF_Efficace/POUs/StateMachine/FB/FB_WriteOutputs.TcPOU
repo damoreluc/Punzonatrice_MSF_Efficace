@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_WriteOutputs" Id="{c282f141-8303-4b57-bdde-657f4d518bb9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_WriteOutputs
+VAR_INPUT
+	stOut		:	ST_Out;
+END_VAR
+VAR_IN_OUT
+	stRawOut	:	ST_RawOut;	
+END_VAR
+VAR
+	fbBlink		:	BLINK;	
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[// blinking
+fbBlink(ENABLE:= TRUE, TIMELOW:= T#500MS, TIMEHIGH:= T#500MS);
+
+// lights on control panel
+IF stOut.bBlinkingOrange THEN
+	stRawOut.bLAck := fbBlink.OUT;
+ELSE
+	IF stOut.bFixedOrange THEN
+		stRawOut.bLAck := TRUE;
+	ELSE
+		stRawOut.bLAck := FALSE;		
+	END_IF
+END_IF
+
+IF stOut.bBlinkingGreen THEN
+	stRawOut.bLStart := fbBlink.OUT;
+ELSE
+	IF stOut.bFixedGreen THEN
+		stRawOut.bLStart := TRUE;
+	ELSE
+		stRawOut.bLStart := FALSE;		
+	END_IF
+END_IF
+
+IF stOut.bBlinkingRed THEN
+	stRawOut.bLStop := fbBlink.OUT;
+ELSE
+	IF stOut.bFixedRed THEN
+		stRawOut.bLStop := TRUE;
+	ELSE
+		stRawOut.bLStop := FALSE;		
+	END_IF
+END_IF
+
+
+// other digital outputs
+stRawOut.bQ1 := stOut.bQ1;
+stRawOut.bQ2 := stOut.bQ2;
+stRawOut.bQ3 := stOut.bQ3;
+stRawOut.bQ4 := stOut.bQ4;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
