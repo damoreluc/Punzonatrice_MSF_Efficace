@@ -6,8 +6,8 @@ STRUCT
 	// machine parameters
 	tLoadingDelay	:	TIME := T#3S;
 	tUnloadingDelay	:	TIME := T#3S;
-	tMaxTravelTime	: TIME := T#60S;  // max travel time on conveyor
-	tMaxPunchMoveTime : TIME := T#60S; // max punch moving time
+	tMaxTravelTime	: TIME := T#5S;  // max travel time on conveyor
+	tMaxPunchMoveTime : TIME := T#3S; // max punch moving time
 	tStoppingDelay	:	TIME := T#2s;
 END_STRUCT
 END_TYPE

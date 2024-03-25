@@ -156,7 +156,7 @@ ELSE
 			// next state transition
 			IF stCtrl.bEnable THEN
 				IF NOT(stStatus.bFailure) THEN
-					IF (bConveyorLoaded AND NOT(stIn.bFc1) AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) THEN
+					IF (bConveyorLoaded AND stIn.bFc1 AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) THEN
 						eNewStep := E_Step.Stopping;
 					END_IF
 				END_IF				
@@ -237,7 +237,7 @@ ELSE
 		E_Step.RecoverPunch :
 			// on entry action
 			IF NOT bEntryact THEN
-				bConveyorLoaded := FALSE;
+				//bConveyorLoaded := FALSE;
 				bEntryact := TRUE;
 			END_IF
 			
@@ -270,7 +270,7 @@ ELSE
 		E_Step.WaitObject :
 			// on entry action
 			IF NOT bEntryact THEN
-				bConveyorLoaded := FALSE;
+				//bConveyorLoaded := FALSE;
 				bEntryact := TRUE;
 			END_IF
 			
@@ -355,6 +355,7 @@ ELSE
 			bQ4 := FALSE;
 			
 			// next state transition
+			// e se la macchina non fosse più abilitata?
 			IF fbRtPacketOut.Q THEN
 				eNewStep := E_Step.LowerPunch;
 			ELSIF tStepTime >= stParams.tMaxTravelTime THEN

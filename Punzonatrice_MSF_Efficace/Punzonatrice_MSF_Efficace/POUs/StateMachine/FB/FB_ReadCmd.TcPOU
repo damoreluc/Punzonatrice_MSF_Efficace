@@ -20,7 +20,7 @@ END_VAR
       <ST><![CDATA[// filters on input button
 //fbRtStart( CLK := stIn.bStart );
 //fbRtStop( CLK := stIn.bStop );
-fbTpStart( IN := stIn.bStart, PT := T#500MS );
+fbTpStart( IN := stIn.bStart, PT := T#50MS );
 fbTpStop( IN := stIn.bStop, PT := T#50MS );
 fbTpAck( IN := stIn.bAck, PT := T#50MS );
 
