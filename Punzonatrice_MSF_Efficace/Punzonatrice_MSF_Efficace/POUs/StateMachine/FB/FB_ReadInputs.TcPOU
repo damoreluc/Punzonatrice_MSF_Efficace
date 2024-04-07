@@ -15,7 +15,7 @@ END_VAR
 ]]></Declaration>
     <Implementation>
       <ST><![CDATA[// digital
-stIn.bEmg := stRawIn.bEmg;
+stIn.bEmg := stRawIn.bEmg;   // NOTA: Emg è sempre attivo basso
 stIn.bStart := stRawIn.bStart;
 stIn.bStop := NOT stRawIn.bStop;
 stIn.bAck := stRawIn.bAck;

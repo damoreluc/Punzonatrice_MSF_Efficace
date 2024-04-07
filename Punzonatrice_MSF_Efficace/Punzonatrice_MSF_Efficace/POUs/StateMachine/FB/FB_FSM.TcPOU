@@ -84,8 +84,8 @@ ELSE
 	END_IF;
 
 	// 1.c Do filters on signals	
-	fbTonPacketIn(IN := stIn.bFc1, PT := T#200MS);	// Object Presence Sensor Filter on Loading Platform
-	fbTonPacketOut(IN := stIn.bFc2, PT := T#200MS);	// Object Presence Sensor Filter on Unloading Platform	
+	fbTonPacketIn(IN := stIn.bFc1, PT := T#100MS);	// Object Presence Sensor Filter on Loading Platform
+	fbTonPacketOut(IN := stIn.bFc2, PT := T#100MS);	// Object Presence Sensor Filter on Unloading Platform	
 	
 	//     Do edge detection
 	fbRtPacketIn(CLK := fbTonPacketIn.Q);		// Edge detection on Loading Platform
