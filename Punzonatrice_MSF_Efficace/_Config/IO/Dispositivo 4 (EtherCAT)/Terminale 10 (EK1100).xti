@@ -22,7 +22,7 @@
 		<Box File="Terminale 15 (EL7031).xti" Id="15">
 			<EtherCAT PortABoxInfo="#x0100000e"/>
 		</Box>
-		<Box File="Terminale 7 (EL9011).xti" Id="16">
+		<Box File="Terminale 8 (EL9011).xti" Id="17">
 			<EtherCAT PortABoxInfo="#x0100000f"/>
 		</Box>
 	</Box>

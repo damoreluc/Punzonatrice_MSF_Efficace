@@ -17,5 +17,6 @@
 			<Name>NC-Task 1 SVB</Name>
 		</SvbTask>
 		<Axis File="Asse 1.xti" Id="1"/>
+		<Axis File="Asse 2.xti" Id="2"/>
 	</NC>
 </TcSmItem>

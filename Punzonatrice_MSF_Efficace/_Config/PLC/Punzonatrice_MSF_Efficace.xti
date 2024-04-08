@@ -101,27 +101,4 @@
 			</TaskPouOids>
 		</Instance>
 	</Project>
-	<Mappings>
-		<OwnerA Name="Punzonatrice_MSF_Efficace Instance">
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1809)">
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bAck" VarB="Channel 7^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bEmg" VarB="Channel 8^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc1" VarB="Channel 1^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc2" VarB="Channel 2^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc3" VarB="Channel 3^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc4" VarB="Channel 4^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bStart" VarB="Channel 5^Input" Size="1"/>
-				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bStop" VarB="Channel 6^Input" Size="1"/>
-			</OwnerB>
-			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL2809)">
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bLAck" VarB="Channel 7^Output" Size="1"/>
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bLStart" VarB="Channel 5^Output" Size="1"/>
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bLStop" VarB="Channel 6^Output" Size="1"/>
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ1" VarB="Channel 1^Output" Size="1"/>
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ2" VarB="Channel 2^Output" Size="1"/>
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ3" VarB="Channel 3^Output" Size="1"/>
-				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ4" VarB="Channel 4^Output" Size="1"/>
-			</OwnerB>
-		</OwnerA>
-	</Mappings>
 </TcSmItem>

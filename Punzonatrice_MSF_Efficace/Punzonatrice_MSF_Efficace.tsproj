@@ -20,7 +20,6 @@
 		</Io>
 	</Project>
 	<Mappings>
-		<MappingInfo Identifier="{00000000-2001-0850-0020-500810000403}" Id="#x02030020"/>
-		<MappingInfo Identifier="{00000000-0040-0304-3000-040340000403}" Id="#x02030010"/>
+		<MappingInfo Identifier="{00000000-0050-0304-3000-040350000403}" Id="#x02030010"/>
 	</Mappings>
 </TcSmProject>
