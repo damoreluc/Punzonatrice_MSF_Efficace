@@ -156,7 +156,7 @@ ELSE
 			// next state transition
 			IF stCtrl.bEnable THEN
 				IF NOT(stStatus.bFailure) THEN
-					IF (bConveyorLoaded AND stIn.bFc1 AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) THEN
+					IF (bConveyorLoaded AND stIn.bFc1 AND stIn.bFc3) OR ( NOT(bConveyorLoaded) AND stIn.bFc3 ) OR (tStepTime > stParams.tMaxTravelTime) THEN
 						eNewStep := E_Step.Stopping;
 					END_IF
 				END_IF				
@@ -207,9 +207,9 @@ ELSE
 			END_IF
 			
 			// body
-			bFixedGreen := TRUE;
+			bFixedGreen := FALSE;
 			bBlinkingGreen := FALSE;
-			bFixedRed := FALSE;
+			bFixedRed := TRUE;
 			bBlinkingRed := FALSE;
 			bFixedOrange := FALSE;
 			bBlinkingOrange := FALSE;
