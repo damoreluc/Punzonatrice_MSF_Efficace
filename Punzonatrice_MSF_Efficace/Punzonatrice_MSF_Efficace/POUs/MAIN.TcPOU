@@ -14,6 +14,7 @@ VAR
 // inputs
 	stIn		:	ST_In;
 	stRawIn		:	ST_RawIn;
+	stHmi		:	ST_HMI;
 
 // outputs
 	stOut		:	ST_Out;
@@ -55,6 +56,7 @@ ELSE
 		stRawOut:= stRawOut, 
 		stOut:= stOut, 
 		stCtrl:= stCtrl, 
+		stHmi := stHmi,
 		stStatus:= stStatus);
 	
 END_IF

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CDevEtherCATDef" SubType="111">
-	<Device Id="4" DevType="111" DevFlags="#x0003" AmsPort="28676" AmsNetId="5.85.198.60.5.1" RemoteName="Dispositivo 4 (EtherCAT)" InfoImageId="6">
+	<Device Id="4" Disabled="true" DevType="111" DevFlags="#x0003" AmsPort="28676" AmsNetId="192.168.56.1.5.1" RemoteName="Dispositivo 4 (EtherCAT)" InfoImageId="6">
 		<Name>__FILENAME__</Name>
 		<AddressInfo>
 			<Pnp>
@@ -14,9 +14,6 @@
 		</Image>
 		<Box File="Terminale 10 (EK1100).xti" Id="10">
 			<EtherCAT PortABoxInfo="#x00ffffff"/>
-		</Box>
-		<Box File="N. box 16 (EasyCAT 32+32 rev 1).xti" Id="16">
-			<EtherCAT PortABoxInfo="#x0200000a"/>
 		</Box>
 		<EtherCAT/>
 	</Device>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <TcSmItem xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56" ClassName="CNestedPlcProjDef">
 	<Project GUID="{8A3D9869-E8D9-4C0A-A783-2DC825B66F95}" Name="Punzonatrice_MSF_Efficace" PrjFilePath="..\..\Punzonatrice_MSF_Efficace\Punzonatrice_MSF_Efficace.plcproj" TmcFilePath="..\..\Punzonatrice_MSF_Efficace\Punzonatrice_MSF_Efficace.tmc" ReloadTmc="true" AmsPort="851" FileArchiveSettings="#x000e" SymbolicMapping="true">
-		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Punzonatrice_MSF_Efficace\Punzonatrice_MSF_Efficace.tmc" TmcHash="{D3E7A150-8EF4-E61C-219C-17D609A5AFAD}">
+		<Instance Id="#x08502000" TcSmClass="TComPlcObjDef" KeepUnrestoredLinks="2" TmcPath="Punzonatrice_MSF_Efficace\Punzonatrice_MSF_Efficace.tmc" TmcHash="{CE76B2B6-31DA-C5FC-37D0-46C153365085}">
 			<Name>Punzonatrice_MSF_Efficace Instance</Name>
 			<CLSID ClassFactory="TcPlc30">{08500001-0000-0000-F000-000000000064}</CLSID>
 			<Vars VarGrpType="1">
@@ -101,4 +101,27 @@
 			</TaskPouOids>
 		</Instance>
 	</Project>
+	<Mappings>
+		<OwnerA Name="Punzonatrice_MSF_Efficace Instance">
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 2 (EL1809)">
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bAck" VarB="Channel 7^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bEmg" VarB="Channel 8^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc1" VarB="Channel 1^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc2" VarB="Channel 2^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc3" VarB="Channel 3^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bFc4" VarB="Channel 4^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bStart" VarB="Channel 5^Input" Size="1"/>
+				<Link VarA="PlcTask Inputs^MAIN.stRawIn.bStop" VarB="Channel 6^Input" Size="1"/>
+			</OwnerB>
+			<OwnerB Name="TIID^Device 1 (EtherCAT)^Term 1 (EK1200)^Term 3 (EL2809)">
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bLAck" VarB="Channel 7^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bLStart" VarB="Channel 5^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bLStop" VarB="Channel 6^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ1" VarB="Channel 1^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ2" VarB="Channel 2^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ3" VarB="Channel 3^Output" Size="1"/>
+				<Link VarA="PlcTask Outputs^MAIN.stRawOut.bQ4" VarB="Channel 4^Output" Size="1"/>
+			</OwnerB>
+		</OwnerA>
+	</Mappings>
 </TcSmItem>

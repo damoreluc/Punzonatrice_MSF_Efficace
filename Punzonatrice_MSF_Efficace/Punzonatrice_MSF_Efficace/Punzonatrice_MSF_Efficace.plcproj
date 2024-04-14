@@ -18,11 +18,10 @@
     <LibraryReferences>{65b07682-06ba-4f26-9f8f-376f1605f9d2}</LibraryReferences>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="GVLs\GVL_RAW_IO.TcGVL">
-      <SubType>Code</SubType>
-      <LinkAlways>true</LinkAlways>
-    </Compile>
     <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\HMI\Structs\ST_HMI.TcDUT">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
@@ -81,6 +80,8 @@
     <Folder Include="DUTs" />
     <Folder Include="GVLs" />
     <Folder Include="POUs\Diagnostic" />
+    <Folder Include="POUs\HMI" />
+    <Folder Include="POUs\HMI\Structs" />
     <Folder Include="POUs\StateMachine" />
     <Folder Include="POUs\StateMachine\Enums" />
     <Folder Include="POUs\StateMachine\FB" />

@@ -2,6 +2,11 @@
 <TcSmProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.beckhoff.com/schemas/2012/07/TcSmProject" TcSmVersion="1.0" TcVersion="3.1.4024.56">
 	<Project ProjectGUID="{7EB2537B-80A8-4A8D-BF41-DF2B20A4B8B9}" Target64Bit="true" ShowHideConfigurations="#x346">
 		<System>
+			<Licenses>
+				<Target>
+					<ManualSelect>{99A3CF49-FFBF-49D4-BA30-F4C0593B5161}</ManualSelect>
+				</Target>
+			</Licenses>
 			<Tasks>
 				<Task Id="3" Priority="20" CycleTime="100000" AmsPort="350" AdtTasks="true">
 					<Name>PlcTask</Name>
@@ -14,5 +19,9 @@
 		<Plc>
 			<Project File="Punzonatrice_MSF_Efficace.xti"/>
 		</Plc>
+		<Io>
+			<Device File="Dispositivo 1 (EtherCAT).xti" Id="1"/>
+			<Device File="Dispositivo 4 (EtherCAT).xti" Id="4"/>
+		</Io>
 	</Project>
 </TcSmProject>

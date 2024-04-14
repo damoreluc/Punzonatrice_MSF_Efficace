@@ -19,6 +19,9 @@ VAR_IN_OUT
 	stOut		:	ST_Out;
 	stCtrl		:	ST_Ctrl;
 	
+	(* HMI inputs *)
+	stHmi		:	ST_HMI;
+	
 	(* state machine internals, useful for debugging  *)
 	stStatus	:	ST_Status;	
 END_VAR
@@ -50,6 +53,7 @@ ELSE
 				stCtrl=> stCtrl);
 				
 	fbReadCmd( stIn:= stIn, 
+			   stHmi := stHmi,
 			   stCmd=> stCmd);
 			   
 	// 02. events management fbDiagnostic

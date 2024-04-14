@@ -1,0 +1,7 @@
+<div id="MainPage" data-tchmi-type="TcHmi.Controls.System.TcHmiContent" data-tchmi-top="0" data-tchmi-left="0" data-tchmi-width="100" data-tchmi-height="100" data-tchmi-width-unit="%" data-tchmi-height-unit="%">
+
+<div id="TcHmiTextblock" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="127" data-tchmi-left-unit="px" data-tchmi-text="Machine status" data-tchmi-top="31" data-tchmi-top-unit="px" data-tchmi-width="143" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="20">
+</div>
+<div id="TcHmiTextblock_1" data-tchmi-type="TcHmi.Controls.Beckhoff.TcHmiTextblock" data-tchmi-height="26" data-tchmi-height-unit="px" data-tchmi-left="300" data-tchmi-left-unit="px" data-tchmi-text="%s%PLC1.MAIN.stStatus.strStep%/s%" data-tchmi-top="31" data-tchmi-top-unit="px" data-tchmi-width="200" data-tchmi-width-unit="px" data-tchmi-word-wrap="true" data-tchmi-text-font-size="20">
+</div>
+</div>

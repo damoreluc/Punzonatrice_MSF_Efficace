@@ -149,7 +149,7 @@ ELSE
 			bBlinkingOrange := TRUE;
 			
 			bQ1 := FALSE;
-			bQ2 := bConveyorLoaded;
+			bQ2 := bConveyorLoaded AND (tStepTime > T#500MS);
 			bQ3 := NOT(stIn.bFc3);
 			bQ4 := FALSE;
 			
